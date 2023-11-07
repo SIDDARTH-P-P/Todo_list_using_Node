@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1><b>Todo</b></h1>
+    <form onsubmit="add(event)" >
+        <input type="text" name="todo" id="input">
+        <input type="submit" value="add">
+    </form>
+    <ol id="list"></ol>
+
+    <script>
+
+        let list = document.getElementById("list");
+        let input = document.getElementById("input");
+
+        let add = (event)=>{
+            event.preventDefault();
+            let formdata = new FormData(event.target);
+            let todo = formdata.get("todo")
+            fetch(`http://localhost:3000/set-todo?todo=${todo}`)
+            print();
+        }
+        
+        let print =  () =>{
+            fetch(`http://localhost:3000/get-data`)
+            .then(res => res.json())
+            .then(data => {
+                list.innerHTML = null;
+                data.forEach((element,index) => {
+                    let li = `<li>${element.todo} <button onclick="del(${index})">Delet</button> <button onclick="edit(${index})">Edit</button></li>`
+                    list.innerHTML += li;
+                });
+            })
+        } 
+
+        let del = (index) =>{
+            fetch(`http://localhost:3000/del-data?id=${index}`)
+            print();
+        }
+
+        let edit = (index) =>{
+            fetch(`http://localhost:3000/edit-data?id=${index}`)
+            fetch("http://localhost:3000/get-data")
+            .then(res => res.json())
+            .then(data => {
+                data.map((item,ind)=>{
+                    if(index == ind ){
+                        input.value = item.todo;
+                        print();
+                    }
+                })
+            })
+        }
+
+
+        print();
+
+
+    </script>
+</body>
+</html>
