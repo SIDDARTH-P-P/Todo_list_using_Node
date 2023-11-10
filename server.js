@@ -67,7 +67,7 @@ const server = http.createServer((req,res)=>{
         })
     }
     if(path.pathname === "/edit-data"){
-        let {id} = path.query;
+        let {id,new_data} = path.query;
         fs.readFile("./data.json","utf-8",(error,data)=>{
             if(error){
                 console.log(error);
@@ -75,8 +75,13 @@ const server = http.createServer((req,res)=>{
                 return;
             }
             todos = data ? JSON.parse(data) : [];
-            todos = todos.filter((item,index)=> index != id);
-            fs.writeFile("./todos.json",JSON.stringify(todos),(error)=>{
+            todos = todos.map((item,ind)=>{
+                if(ind == id){
+                    return {todo:new_data}
+                }
+                return item
+            })
+            fs.writeFile("./data.json",JSON.stringify(todos),(error)=>{
                 if(error){
                     console.log(error);
                     res.end("error");

@@ -20,10 +20,15 @@
 
         let add = (event)=>{
             event.preventDefault();
+            
             let formdata = new FormData(event.target);
             let todo = formdata.get("todo")
             fetch(`http://localhost:3000/set-todo?todo=${todo}`)
-            print();
+            .then(res => res.text())
+            .then(data =>{
+                print();
+            })
+
         }
         
         let print =  () =>{
@@ -40,21 +45,20 @@
 
         let del = (index) =>{
             fetch(`http://localhost:3000/del-data?id=${index}`)
-            print();
+            .then(res =>res.text())
+            .then(data =>{
+                 print();
+            })
         }
 
         let edit = (index) =>{
-            fetch(`http://localhost:3000/edit-data?id=${index}`)
-            fetch("http://localhost:3000/get-data")
-            .then(res => res.json())
-            .then(data => {
-                data.map((item,ind)=>{
-                    if(index == ind ){
-                        input.value = item.todo;
-                        print();
-                    }
-                })
-            })
+          let  new_data = prompt("add new data")
+          fetch(`http://localhost:3000/edit-data?id=${index}&new_data=${new_data}`)
+          .then(res => res.text())
+          .then(data =>{
+            alert(`successfully editted ${data}`)
+            print();
+          }) 
         }
 
 
